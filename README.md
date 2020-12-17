@@ -26,3 +26,10 @@ example code of online course
   + 브라우저를 사용하지 않는 경우에는 CSRF를 disable한다
    - programatic clients like Spring RestTemplate or WebClient
    
+# 웹에는 2가지 환경이 있다
+ - 하나는 브라우저를 통하는것. 한번 로그인하면 세션이 유지된다
+ - 하나는 Resttful API에 접속하는 것. 접속 할 때마다 인증이 필요하다
+ 
+
+https://www.base64encode.org/
+   
