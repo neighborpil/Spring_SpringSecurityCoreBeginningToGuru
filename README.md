@@ -33,3 +33,15 @@ example code of online course
 
 https://www.base64encode.org/
    
+#### JPA 테스트 방법  
+ - @WebMvcTest에서는 JPA테스트 안됨
+ - @SpringBootTest로 클래스 어노테이션을 바꿔줘야 함
+```
+//@WebMvcTest
+@SpringBootTest
+public class BeerRestControllerIT extends BaseIT {
+```
+
+### Roles VS Authorities
+ - Role은 일반적으로 Authorities의 그룹이다
+ - Role은 반드시 "ROLE_"를 접두어로 가진다
