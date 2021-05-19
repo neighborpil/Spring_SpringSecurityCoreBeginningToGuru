@@ -45,3 +45,28 @@ public class BeerRestControllerIT extends BaseIT {
 ### Roles VS Authorities
  - Role은 일반적으로 Authorities의 그룹이다
  - Role은 반드시 "ROLE_"를 접두어로 가진다
+ - TDD : BeerRestControllerIT.java
+```
+http
+                .authorizeRequests(authorize -> {
+                    authorize
+                            .antMatchers("/h2-console/**").permitAll() //do not use in production!
+                            .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
+                            .antMatchers("/beers/find", "/beers*").permitAll()
+                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
+                            .mvcMatchers(HttpMethod.DELETE, "/api/v1/beer/**").hasRole("ADMIN")
+                            .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll()
+                            .mvcMatchers("/brewery/breweries/**")
+                                .hasAnyRole("ADMIN", "CUSTOMER")
+                            .mvcMatchers(HttpMethod.GET, "/brewery/api/v1/breweries")
+                                .hasAnyRole("ADMIN", "CUSTOMER");
+                } )
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().and()
+                .httpBasic()
+                .and().csrf().disable();
+
+```
+ 
