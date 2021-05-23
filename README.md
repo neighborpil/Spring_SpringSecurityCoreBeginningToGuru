@@ -70,3 +70,16 @@ http
 
 ```
  
+### Method에 Security 적용하는 법
+ 1. SecurityConfig 헤더쪽에 어노테이션 설정 해준다
+```
+@EnableGlobalMethodSecurity(securedEnabled = true)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+```
+ 2. 메서드헤더에 어노테이션 설정 해준다
+```
+    @Secured({"ROLE_ADMIN", "ROLE_CUSTOMER"})
+    @GetMapping
+    public String processFindFormReturnMany(Customer customer, BindingResult result, Model model){
+```
+ 3. 테스트 케이스 : /methodSecurity폴더 참조
