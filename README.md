@@ -83,3 +83,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public String processFindFormReturnMany(Customer customer, BindingResult result, Model model){
 ```
  3. 테스트 케이스 : /methodSecurity폴더 참조
+
+
+### Synthex별로 권한 주는 방법
+ - 동일한 주소(/new)라도 Get, Post방식이 다를 수 있다
+ - Post에만 권한을 주는 방법이다
+ - Spring5에서부터 된다
+ 1. SecurityConfig 헤더쪽에 어노테이션 설정 해준다
+```
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+```
+ 2. 메서드헤더에 어노테이션 설정 해준다
+```
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/new")
+    public String processCreationForm(Customer customer) {
+```
+ 3. 테스트 케이스 : /syntexSecurity폴더 참조
