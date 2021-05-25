@@ -101,3 +101,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public String processCreationForm(Customer customer) {
 ```
  3. 테스트 케이스 : /syntexSecurity폴더 참조
+
+
+### User - Role - Authority 권한 설정
+ - domain 설정: /userRoleAuthority/domain 폴더 참조
+ - 
+
