@@ -107,3 +107,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
  - domain 설정: /userRoleAuthority/domain 폴더 참조
  - 
 
+
+## @PreAuthorize()
+ - 각 메소드마다 실행 권한을 설정 할 수 있다
+ - @Configuration SecurityConfig 클래스에서 주소에 따른 권한을 설정 할 수 있지만,
+   프로그램이 복잡해지면, 권한설정이 어렵고 에러를 일으키기 쉽다
+ - @PreAuthorize를 사용하면 각 메소드에 설정하기 때문에 직관적이고 유지보수 하기 쉽다
+ - 예제파일 : /preAuthorize폴더 참조
+```
+    @PreAuthorize("hasAuthority('beer.read')")
+    @GetMapping(path = {"beerUpc/{upc}"}, produces = { "application/json" })
+    public ResponseEntity<BeerDto> getBeerByUpc(@PathVariable("upc") String upc){
+```
