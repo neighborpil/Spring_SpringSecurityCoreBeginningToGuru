@@ -119,3 +119,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @GetMapping(path = {"beerUpc/{upc}"}, produces = { "application/json" })
     public ResponseEntity<BeerDto> getBeerByUpc(@PathVariable("upc") String upc){
 ```
+
+## Custom Authorization Annotation
+ - @interface를 정의함으로써 권한을 설정 할 수 있다
+ - 훨씬 깔끔해진다
+ - 정의
+ - customAuthorizationAnnotation 폴더 참조
+```
+@Retention(RetentionPolicy.RUNTIME)
+@PreAuthorize("hasRole('beer.create')")
+public @interface BeerCreatePermission {
+}
+```
+ - 사용
+```
+//    @PreAuthorize("hasAuthority('beer.delete')")
+    @BeerDeletePermission
+    @DeleteMapping({"beer/{beerId}"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBeer(@PathVariable("beerId") UUID beerId){
+```
