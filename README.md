@@ -139,3 +139,12 @@ public @interface BeerCreatePermission {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBeer(@PathVariable("beerId") UUID beerId){
 ```
+
+## Multi-tenancy Security
+![image](https://user-images.githubusercontent.com/22423285/121757321-239d3d00-cb58-11eb-80ad-24133f4acc30.png)
+![image](https://user-images.githubusercontent.com/22423285/121757644-349a7e00-cb59-11eb-952f-28e83b034517.png)
+
+![image](https://user-images.githubusercontent.com/22423285/121757492-b211be80-cb58-11eb-8b0e-2700111d9a7e.png)
+
+
+#### ※ SPeL : Spring Expression Language
