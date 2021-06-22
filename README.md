@@ -148,3 +148,60 @@ public @interface BeerCreatePermission {
 
 
 #### ※ SPeL : Spring Expression Language
+
+
+## Customer User 만들기
+ - implements UserDetails, CredentialsContainer 
+ - serCustomerSetting 폴더 참조
+ - 필요한 항목 오버라이드
+```
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.enabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    @Builder.Default
+    private Boolean accountNonExpired = true;
+
+    @Builder.Default
+    private Boolean accountNonLocked = true;
+
+    @Builder.Default
+    private Boolean credentialsNonExpired = true;
+
+    @Builder.Default
+    private Boolean enabled = true;
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
+    }
+```
+ - lazyloading때문에 Fetch type을 EAGER로 해준다
+```
+    @Singular
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+        joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
+        inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
+    private Set<Role> roles;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Customer customer;
+```
