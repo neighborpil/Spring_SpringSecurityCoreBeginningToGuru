@@ -205,3 +205,6 @@ public @interface BeerCreatePermission {
     @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
 ```
+
+## Multi-tenancy Security TDD for spring security
+ - BeerOrderControllerTest폴더 참조
