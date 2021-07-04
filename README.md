@@ -208,3 +208,96 @@ public @interface BeerCreatePermission {
 
 ## Multi-tenancy Security TDD for spring security
  - BeerOrderControllerTest폴더 참조
+
+## Custom Authentication Manager
+ - 클래스 생성
+```
+package guru.sfg.brewery.security;
+
+import guru.sfg.brewery.domain.security.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
+@Component
+@Slf4j
+public class BeerOrderAuthenticationManager {
+
+    public boolean customerIdMatches(Authentication authentication, UUID customerId) {
+
+        User authenticationUser = (User) authentication.getPrincipal();
+
+        log.debug("Auth User Customer Id: " + authenticationUser.getCustomer().getId() + " Customer Id:" + customerId);
+
+        return authenticationUser.getCustomer().getId().equals(customerId);
+
+    }
+}
+```
+ - 적용
+```
+    @PreAuthorize("hasAuthority('order.read') OR " +
+            "hasAuthroity('customer.order.read') AND " +
+            "@BeerOrderAuthenticationManager.customerIdMatches(authentication, #customerId)")
+    @GetMapping("orders")
+    public BeerOrderPagedList listOrders(@PathVariable("customerId") UUID customerId,
+                                         @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                         @RequestParam(value = "pageSize", required = false) Integer pageSize){
+
+        if (pageNumber == null || pageNumber < 0){
+            pageNumber = DEFAULT_PAGE_NUMBER;
+        }
+
+        if (pageSize == null || pageSize < 1) {
+            pageSize = DEFAULT_PAGE_SIZE;
+        }
+
+        return beerOrderService.listOrders(customerId, PageRequest.of(pageNumber, pageSize));
+    }
+```
+ - 테스트
+```
+
+    @Transactional
+    @Test
+    void getByOrderIdNotAuth() throws Exception {
+        BeerOrder beerOrder  = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
+
+        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Transactional
+    @WithUserDetails("spring")
+     @Test
+    void getByOrderIdADMIN() throws Exception {
+        BeerOrder beerOrder  = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
+
+        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId()))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Transactional
+    @WithUserDetails(DefaultBreweryLoader.STPETE_USER)
+     @Test
+    void getByOrderIdCustomerAuth() throws Exception {
+        BeerOrder beerOrder  = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
+
+        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId()))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+
+    @Transactional
+    @WithUserDetails(DefaultBreweryLoader.DUNEDIN_USER)
+     @Test
+    void getByOrderIdCustomerNOTAuth() throws Exception {
+        BeerOrder beerOrder  = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
+
+        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId()))
+                .andExpect(status().isForbidden());
+    }
+
+```
